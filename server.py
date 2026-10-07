@@ -2,6 +2,8 @@ print (" [+] Loading basics...")
 import os
 import json
 import urllib
+from werkzeug.security import generate_password_hash, check_password_hash
+
 if os.name == 'nt':
     os.system("color")
     os.system("title Social Empires Server")
@@ -28,11 +30,37 @@ from quests import get_quest_map
 from bundle import ASSETS_DIR, STUB_DIR, TEMPLATES_DIR, BASE_DIR
 
 host = '127.0.0.1'
-port = 5050
+port = 80
 
 app = Flask(__name__, template_folder=TEMPLATES_DIR)
+app.secret_key = 'SECRET_KEY_FOR_SESSION_AND_FLASH'
 
 print (" [+] Configuring server routes...")
+
+# ==========================================
+# BASE DE DATOS DE USUARIOS (Simulada en un archivo JSON)
+# ==========================================
+USERS_FILE = 'users_db.json'
+
+def load_users():
+    if os.path.exists(USERS_FILE):
+        with open(USERS_FILE, 'r') as f:
+            return json.load(f)
+    return {}
+
+def save_user(email, password, userid):
+    users = load_users()
+    users[email] = {
+        "password_hash": generate_password_hash(password),
+        "userid": str(userid)
+    }
+    with open(USERS_FILE, 'w') as f:
+        json.dump(users, f, indent=4)
+
+# Crear un usuario de prueba si no hay base de datos (Opcional, pero útil)
+if not os.path.exists(USERS_FILE):
+    # NOTA: Cambia este USERID por uno que sepas que existe si quieres probarlo
+    save_user("admin@test.com", "123456", "100000000000001") 
 
 ##########
 # ROUTES #
@@ -47,17 +75,70 @@ def login():
     session.pop('GAMEVERSION', default=None)
     # Reload saves. Allows saves modification without server reset
     load_saved_villages()
-    # If logging in, set session USERID, and go to play
+    
+    error = None
+
     if request.method == 'POST':
-        session['USERID'] = request.form['USERID']
-        session['GAMEVERSION'] = request.form['GAMEVERSION']
-        print("[LOGIN] USERID:", request.form['USERID'])
-        print("[LOGIN] GAMEVERSION:", request.form['GAMEVERSION'])
-        return redirect("/play.html")
-    # Login page
-    if request.method == 'GET':
-        saves_info = all_saves_info()
-        return render_template("login.html", saves_info=saves_info, version=version_name)
+        # NUEVO SISTEMA: Intenta leer email y contraseña
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        # SISTEMA ANTIGUO: Por si acaso se envía el formulario antiguo
+        userid_directo = request.form.get('USERID')
+        
+        game_version = request.form.get('GAMEVERSION', 'SocialEmpires0926bsec.swf')
+
+        if email and password:
+            users_db = load_users()
+            if email in users_db and check_password_hash(users_db[email]['password_hash'], password):
+                user_id = users_db[email]['userid']
+                if user_id in all_saves_userid():
+                    session['USERID'] = user_id
+                    session['GAMEVERSION'] = game_version
+                    print(f"[LOGIN] Email: {email} -> USERID: {user_id}")
+                    return redirect("/play.html")
+                else:
+                    error = "El usuario existe, pero no se encontró su partida guardada."
+            else:
+                error = "Email o contraseña incorrectos."
+        
+        elif userid_directo:
+            # Fallback para el sistema antiguo (desarrollo/pruebas)
+            session['USERID'] = userid_directo
+            session['GAMEVERSION'] = game_version
+            print("[LOGIN] USERID (Direct):", userid_directo)
+            return redirect("/play.html")
+            
+    # GET request o POST con error
+    saves_info = all_saves_info()
+    return render_template("login.html", saves_info=saves_info, version=version_name, error=error)
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    """Ruta para manejar el formulario de registro de tu nuevo login.html"""
+    error = None
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        game_version = request.form.get('GAMEVERSION', 'SocialEmpires0926bsec.swf')
+        
+        users_db = load_users()
+        if email in users_db:
+            error = "El email ya está registrado."
+        else:
+            # Crear nueva aldea (usando tu función original)
+            new_user_id = new_village()
+            # Guardar en la base de datos JSON
+            save_user(email, password, new_user_id)
+            
+            # Iniciar sesión
+            session['USERID'] = new_user_id
+            session['GAMEVERSION'] = game_version
+            print(f"[REGISTER] Nuevo usuario: {email} -> USERID: {new_user_id}")
+            return redirect("/play.html")
+            
+    return render_template("register.html", version=version_name, error=error)
+
 
 @app.route("/play.html")
 def play():
@@ -115,7 +196,6 @@ def css(path):
     return send_from_directory(TEMPLATES_DIR + "/css", path)
 
 ## GAME STATIC
-
 
 @app.route("/default01.static.socialpointgames.com/static/socialempires/swf/05122012_projectiles.swf")
 def similar_05122012_projectiles():
@@ -303,5 +383,4 @@ def get_continent_ranking_response():
 print (" [+] Running server...")
 
 if __name__ == '__main__':
-    app.secret_key = 'SECRET_KEY'
     app.run(host=host, port=port, debug=False)

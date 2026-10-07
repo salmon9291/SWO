@@ -1,0 +1,10 @@
+{
+    "admin@test.com": {
+        "password_hash": "scrypt:32768:8:1$lvPWtTG7YiejdzcA$4dbc09bde73d53b88a3ccbbfa24ca715733c64b904ea7d2725e8a56b0f41530a7ab21b1f656b4a13ea2dcdb8a6c390b2f69350631295de5f092eac4e6b8b84ca",
+        "userid": "100000000000001"
+    },
+    "mitabletrubi21@gmail.com": {
+        "password_hash": "scrypt:32768:8:1$7OkJaxDFmU4hGP8B$6a9d1ac8f41031a1babc26be8099a2b23fd0a00f1eaadcd90d7f6f6831f8cfd2550a683a8f0d7ae2b4b639be9bd75a60e4a2ad99624fe819dd931d8bd530c9c8",
+        "userid": "9f44a569-0ca9-4fb5-8543-4316a06930d4"
+    }
+}

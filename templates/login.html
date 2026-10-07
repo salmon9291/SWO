@@ -1,83 +1,265 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 	<head>
 		<!-- Meta -->
 		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- Title and Icon -->
 		<title id="pageTitle">Social Empires</title>
 		<link rel="shortcut icon" href="img/icon.gif"/>
 		<link rel="icon" type="image/png" href="img/icon.gif"/>
-		<!-- CSS -->
-		<link rel="stylesheet" href="css/facebook.css"/>
+		<!-- CSS Moderno Optimizado para Móviles -->
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				margin: 0;
+				padding: 0;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+				background-color: #f8f9fa;
+				color: #333333;
+				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+			}
+
+			/* Contenedor principal de dos columnas en escritorio */
+			.split-screen {
+				display: flex;
+				width: 100vw;
+				min-height: 100vh;
+			}
+
+			/* Columna Izquierda: Formulario */
+			.left-side {
+				flex: 1;
+				background: #ffffff;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				padding: 40px 60px;
+				overflow-y: auto;
+				max-width: 550px;
+				z-index: 2;
+				box-shadow: 5px 0 25px rgba(0, 0, 0, 0.05);
+			}
+
+			/* Columna Derecha: Panel visual con imagen de fondo */
+			.right-side {
+				flex: 1.2;
+				background: #0b0f19 url('https://raw.githubusercontent.com/AcidCaos/socialemperors/main/assets/images_new/SELVA.jpg') no-repeat center center;
+				background-size: cover;
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-end;
+				align-items: center;
+				position: relative;
+				overflow: hidden;
+				padding: 40px;
+				min-height: 300px;
+			}
+
+			/* Capa oscura semitransparente sobre la imagen */
+			.right-side::before {
+				content: '';
+				position: absolute;
+				top: 0; left: 0; right: 0; bottom: 0;
+				background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 100%);
+				pointer-events: none;
+			}
+
+			.logo-container {
+				margin-bottom: 20px;
+			}
+
+			.welcome-title {
+				font-size: 22px;
+				font-weight: 700;
+				color: #111827;
+				margin-bottom: 8px;
+			}
+
+			.welcome-desc {
+				font-size: 13px;
+				color: #6b7280;
+				line-height: 1.5;
+				margin-bottom: 25px;
+			}
+
+			.input-group {
+				margin-bottom: 16px;
+			}
+
+			.input-group label {
+				display: block;
+				font-size: 13px;
+				font-weight: 600;
+				color: #374151;
+				margin-bottom: 6px;
+			}
+
+			.form-control {
+				width: 100%;
+				height: 44px; /* Altura óptima para toque en móviles */
+				padding: 8px 14px;
+				font-size: 16px; /* Evita zoom automático en iOS al enfocar */
+				border: 1px solid #d1d5db;
+				border-radius: 6px;
+				background-color: #ffffff;
+				color: #1f2937;
+				transition: border-color 0.2s, box-shadow 0.2s;
+			}
+
+			.form-control:focus {
+				outline: none;
+				border-color: #2563eb;
+				box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+			}
+
+			.tip-text {
+				font-size: 12px;
+				color: #6b7280;
+				margin-top: 6px;
+				font-style: italic;
+			}
+
+			/* Botón estilo píldora optimizado para móviles */
+			.btn-submit {
+				width: 100%;
+				height: 48px;
+				background-color: #1d4ed8;
+				color: #ffffff;
+				border: none;
+				border-radius: 25px;
+				font-size: 16px;
+				font-weight: 600;
+				cursor: pointer;
+				transition: background-color 0.2s;
+				margin-top: 10px;
+				box-shadow: 0 4px 6px rgba(29, 78, 216, 0.2);
+			}
+
+			.btn-submit:active {
+				background-color: #1e40af;
+			}
+
+			.error-box {
+				color: #b91c1c;
+				background: #fee2e2;
+				border: 1px solid #fca5a5;
+				padding: 10px 14px;
+				border-radius: 6px;
+				margin-bottom: 20px;
+				font-size: 13px;
+			}
+
+			.footer-register {
+				margin-top: 25px;
+				border-top: 1px solid #e5e7eb;
+				padding-top: 20px;
+				font-size: 13px;
+				color: #4b5563;
+			}
+
+			.footer-register a {
+				color: #2563eb;
+				text-decoration: none;
+				font-weight: 600;
+			}
+
+			/* --- DISEÑO RESPONSIVO PARA CELULARES (Pantallas menores a 768px) --- */
+			@media (max-width: 768px) {
+				body {
+					height: auto;
+					overflow-y: auto;
+				}
+				.split-screen {
+					flex-direction: column-reverse; /* Pone la imagen arriba o el formulario abajo según prefieras, o column normal */
+					flex-direction: column;
+					height: auto;
+				}
+				.right-side {
+					height: 200px; /* Altura compacta para el banner en celulares */
+					min-height: 200px;
+					padding: 20px;
+				}
+				.left-side {
+					max-width: 100%;
+					padding: 30px 20px;
+					box-shadow: none;
+				}
+				.welcome-title {
+					font-size: 20px;
+				}
+			}
+		</style>
 	</head>
-	<body class="ego_wide canvas center_fixed_width_app fbx UIPage_LoggedOut liquid hideBanner Locale_en_US" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); overflow: auto;">
-		<center><img src="img/logo.png" style="width: 200px;"/></center>
-		<div class="mvl ptm uiInterstitial canvas_error_page uiInterstitialLarge uiBoxWhite">
-			<!-- HEAD TITLE -->
-			<div class="uiHeader uiHeaderBottomBorder mhl mts uiHeaderPage interstitialHeader">
-				<div class="clearfix uiHeaderTop">
-					<div>
-						<img src="img/sword.png" height="18px" style="margin-left: 5px;">
-						<h2 class="uiHeaderTitle" aria-hidden="true" style="margin-left: 2px; display: inline-block;">
-							<a href="/" style="text-decoration: none;">Social Empires </a>
-						</h2>
-						<p style="display: inline-block; margin: 0 0 4px 6px;">By the Social Emperors team ~ {{ version | default("?")}}</p>
-					</div>
+	<body>
+
+		<div class="split-screen">
+			<!-- Columna Izquierda: Formulario -->
+			<div class="left-side">
+				<!-- Logo -->
+				<div class="logo-container">
+					<img src="img/logo.png" style="width: 140px;"/>
 				</div>
-			</div>
-			<!-- LOGIN CONTENT -->
-			<div class="phl ptm uiInterstitialContent" style="overflow: auto; display: inblock;">
-				<br>
-				<div style="margin-left:20px; font-size:13px; float: left;">
-					{% if saves_info %}
-					<form method="post">
-						<!-- VILLAGE SELECTION -->
-						<b>Select a village</b>
-						<br><br>
-						<div style="float: left; margin-right: 4px;">
-							<img src="img/villager.png" style="height: 27px; margin-top: 0px;">
-						</div>
-						<div style="float: left">
-							<select id="USERID" name="USERID" style="height: 27px; min-width: 330px;" required>
-								{% for save in saves_info %}
-								<option value="{{save.userid}}" title="{{save.userid}}">{{save.name}} ~ level {{save.level}} ({{save.xp}} xp)</option>
-								{% endfor %}
-							</select>
-						</div>
-						<br><br>
-						<br>
-						<!-- RELEASE SELECTION -->
-						<b>Game version</b>
-						<br><br>
-						<div style="overflow: auto; display: inblock;">
-							<div style="float: left">
-								<div style="float: left; margin-right: 4px;">
-									<img src="img/knight.png" style="height: 27px; margin-top: 0px;">
-								</div>
-								<div style="float: left">
-									<select id="GAMEVERSION" name="GAMEVERSION" style="height: 24px;" required>
-										<option value="SocialEmpires0926bsec.swf">0.9.26b (Working)</option>
-										<option value="SocialEmpires1.1.5sec.swf">1.1.5 (Experimental)</option>
-										<option value="SocialEmpires1.4.07sec.swf">1.4.07 (Broken)</option>
-									</select>
-								</div>
-								<br><br> <i>Tip: 0.9.26b Contains legacy Troll Missions!</i>
-								<br><br>
-							</div>
-							<div style="float: right;">
-								<button type="submit" style="font-size:14px; height: 25px">Log in</button>
-							</div>
-						</div>
-					</form>
-					<br>
-					<!-- NEW VILLAGE -->
-					<p style="font-size:13px; display: inline;">Or </p>
-					{% endif %}
-					<p style="font-size:13px; display: inline;">
-						<b><a href="/new.html">Create a new empire</a></b>
+
+				<h1 class="welcome-title">Bienvenido de nuevo</h1>
+				<p class="welcome-desc">
+					Inicia sesión en tu imperio de Social Empires y continúa tu aventura.
+				</p>
+
+				<!-- ERROR MESSAGE -->
+				{% if error %}
+				<div class="error-box">
+					<b>Error:</b> {{ error }}
+				</div>
+				{% endif %}
+
+				<form action="/" method="post">
+					<!-- CREDENTIALS INPUT -->
+					<div class="input-group">
+						<label for="email">Correo electrónico *</label>
+						<input type="email" id="email" name="email" class="form-control" placeholder="nombre@correo.com" required>
+					</div>
+
+					<div class="input-group">
+						<label for="password">Contraseña *</label>
+						<input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+					</div>
+					
+					<!-- RELEASE SELECTION -->
+					<div class="input-group">
+						<label for="GAMEVERSION">Versión del juego</label>
+						<select id="GAMEVERSION" name="GAMEVERSION" class="form-control" required>
+							<option value="SocialEmpires0926bsec.swf">0.9.26b (Working)</option>
+							<option value="SocialEmpires1.1.5sec.swf">1.1.5 (Experimental)</option>
+							<option value="SocialEmpires1.4.07sec.swf">1.4.07 (Broken)</option>
+						</select>
+						<div class="tip-text">Tip: 0.9.26b Contains legacy Troll Missions!</div>
+					</div>
+
+					<!-- SUBMIT BUTTON -->
+					<button type="submit" class="btn-submit">Iniciar sesión</button>
+				</form>
+				
+				<!-- NEW VILLAGE / REGISTER -->
+				<div class="footer-register">
+					<p style="margin: 0;">
+						¿No tienes una cuenta? <a href="/register">Crear un nuevo imperio</a>
 					</p>
 				</div>
 			</div>
+
+			<!-- Columna Derecha: Panel visual con imagen de fondo -->
+			<div class="right-side">
+				<div style="z-index: 2; text-align: center; color: white; padding: 10px;">
+					<h2 style="font-size: 22px; margin-bottom: 4px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">SOCIAL EMPIRES</h2>
+					<p style="color: #d1d5db; font-size: 12px; margin: 0; text-shadow: 0 1px 2px rgba(0,0,0,0.6);">By the Social Emperors team ~ {{ version | default("?")}}</p>
+				</div>
+			</div>
 		</div>
+
 	</body>
 </html>
